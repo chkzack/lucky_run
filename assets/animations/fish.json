@@ -1,0 +1,40 @@
+{
+    "frames": {
+        "swim_0000":
+        {
+            "frame": {"x":0,"y":0,"w": 87,"h":24},
+            "rotated": false,
+            "trimmed": true,
+            "spriteSourceSize": {"x":0,"y":0,"w":87,"h":24},
+            "sourceSize": {"w":29,"h":24},
+            "pivot": {"x":0.5,"y":0.5}
+        },
+        "swim_0001":
+        {
+            "frame": {"x":29,"y":0,"w":87,"h":24},
+            "rotated": false,
+            "trimmed": true,
+            "spriteSourceSize": {"x":1,"y":0,"w":87,"h":24},
+            "sourceSize": {"w":29,"h":24},
+            "pivot": {"x":0.5,"y":0.5}
+        },
+        "swim_0002":
+        {
+            "frame": {"x":58,"y":0,"w":87,"h":24},
+            "rotated": false,
+            "trimmed": true,
+            "spriteSourceSize": {"x":2,"y":0,"w":87,"h":24},
+            "sourceSize": {"w":29,"h":24},
+            "pivot": {"x":0.5,"y":0.5}
+        }
+    },
+    "meta": {
+        "app": "",
+        "version": "1.0",
+        "image": "fish.png",
+        "format": "RGBA8888",
+        "size": {"w":87,"h":24},
+        "scale": "1",
+        "smartupdate": "$TexturePacker:SmartUpdate:00da5f2dda959eb030a247ff97a460de:5ea25d6f22b1a599389e7149648afa47:f88fd930c3ec52f585d0c1bc69f4580c$"
+    }
+}
