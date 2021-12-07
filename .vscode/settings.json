@@ -5,5 +5,6 @@
         "proxyUri": "http://local.nftdata.com/api"
     },
     "liveServer.settings.host": "localhost",
-    "liveServer.settings.donotVerifyTags": true
+    "liveServer.settings.donotVerifyTags": true,
+    "liveServer.settings.port": 5502
 }

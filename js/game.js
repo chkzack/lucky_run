@@ -19,15 +19,12 @@ class Boot extends Phaser.Scene {
 
     this.load.image("background", "assets/background-ocean1.png"); //背景
     this.load.image("ground", "assets/ground-ocean.png"); //地面
-    this.load.image("sky", "assets/sky-ocean.png"); //天花板
 
-    this.load.image("title", "assets/title1.png"); //游戏标题
+    this.load.image("title", "assets/title.png"); //游戏标题
     // { frameWidth: 32, frameHeight: 38 }  
     // 29, 24, 3
-    this.load.spritesheet("fish", "assets/fish1.png", { frameWidth: 29, frameHeight: 24 , startFrame: 0, endFrame: 2}); //鱼
+    this.load.spritesheet("fish", "assets/bird.png", { frameWidth: 29, frameHeight: 24 , startFrame: 0, endFrame: 2}); //鱼
 
-    this.load.image("btn", "assets/start-button.png"); //按钮
-    this.load.image("share", "assets/share-button1.png"); //分享按钮
   }
 
   create() {
@@ -99,8 +96,8 @@ class Boot extends Phaser.Scene {
   }
 
   update() {
-    this.background.tilePositionX -= 1;
-    this.ground.tilePositionX -= 2;
+    this.background.tilePositionX += 1;
+    this.ground.tilePositionX += 2;
   }
 
   loadingBar() {
@@ -542,7 +539,7 @@ class Play extends Phaser.Scene {
 }
 
 const params = {
-  debug: false,
+  debug: true,
 
   // 通讯参数
   webSocket: undefined,
@@ -581,7 +578,7 @@ const params = {
   // 累计胜场
   historyScore: 0,
   
-  hasPlayPoints: false,
+  hasPlayPoints: true,
   startTime: undefined,
   endTime: undefined,
   timeArray: [],
