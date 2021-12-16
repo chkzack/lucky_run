@@ -1,0 +1,84 @@
+{
+    "1": {
+        "name": "锥桶",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "2": {
+        "name": "隔离带",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "3": {
+        "name": "隔离堆",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "4": {
+        "name": "隔离堆",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "5": {
+        "name": "隔离堆",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "6": {
+        "name": "隔离堆",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "7": {
+        "name": "隔离堆",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "8": {
+        "name": "隔离堆",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+    "9": {
+        "name": "隔离堆",
+        "top": true,
+        "left": true,
+        "bottom": true,
+        "right": true,
+        "x": 1,
+        "y": 1
+    },
+
+}
