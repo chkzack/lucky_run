@@ -4,7 +4,7 @@ const params = {
   mapHeight: 20,
   distance: 0,
   gravity: 800,
-  jump: -400,
+  jump: -376,
   pace: 4
 };
 
@@ -22,10 +22,14 @@ class Demo extends Phaser.Scene {
     this.load.image("tiles", "assets/tilemaps/test_16.png");
 
     // roles
-    this.load.spritesheet("role", "assets/fish1.png", { frameWidth: 29, frameHeight: 24 , startFrame: 0, endFrame: 2}); //鱼
+    this.load.spritesheet("role", "assets/animations/fish.png", { frameWidth: 29, frameHeight: 24 , startFrame: 0, endFrame: 2});
+    // 
+    this.load.image("background", "assets/background_small.png");
   }
 
   create() {
+    this.add.image(0, 0, 'background').setOrigin(0, 0).setDepth(0).setAlpha(0.75);
+
     // distance text
     this.text = this.add.text(16, 16, this.data, {
       fontSize: "18px",
@@ -255,7 +259,7 @@ class Demo extends Phaser.Scene {
       this.layoutLevelConfig('block2', 21, 10);
       this.layoutLevelConfig('block2', 22, 10);
 
-      this.layoutLevelConfig('block3', 35, 3);
+      this.layoutLevelConfig('block3', 35, 4);
 
       this.layoutLevelConfig('bucket', 35, 5);
       this.layoutLevelConfig('bucket', 35, 5);
@@ -294,7 +298,7 @@ class Demo extends Phaser.Scene {
         // You can place a row of tile indexes at a location
         this.layer.putTilesAt([ 
                                 [35, 35], 
-                                [35, 37]
+                                [35, 35]
                               ], tileX, tileY, true);
         break; 
       case "tube":
@@ -379,7 +383,7 @@ const game = new Phaser.Game({
     height: 16 * params.mapHeight,
     zoom: 1,
   },
-  pixelArt: true,
+  pixelArt: false,
   physics: {
     default: "arcade",
     arcade: {
