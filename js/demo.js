@@ -22,25 +22,38 @@ class Demo extends Phaser.Scene {
     this.load.image("tiles", "assets/tilemaps/test_16.png");
 
     // roles
-    this.load.spritesheet("role", "assets/animations/fish.png", { frameWidth: 29, frameHeight: 24 , startFrame: 0, endFrame: 2});
+    this.load.spritesheet("role", "assets/animations/role.png", { frameWidth: 32, frameHeight: 32 , startFrame: 0, endFrame: 3});
     // 
-    this.load.image("background", "assets/background_small.png");
+
+    this.hour = new Date().getHours;
+    if (Math.random() > 0.5) {
+    // if (hour >= 6 &&  hour >= 18) {
+      this.load.image("background", "assets/background.png");
+    } else {
+      this.load.image("background", "assets/background2.png");
+    }
+    
   }
 
   create() {
-    this.add.image(0, 0, 'background').setOrigin(0, 0).setDepth(0).setAlpha(0.75);
+    this.background = this.add.tileSprite(0, 0, 960, 524, 'background')
+                              .setOrigin(0, 0)
+                              .setScale(0.7, 0.6)
+                              .setDepth(0)
+                              .setAlpha(0.55)
+                              .setScrollFactor(0);
 
     // distance text
     this.text = this.add.text(16, 16, this.data, {
       fontSize: "18px",
       padding: { x: 10, y: 5 },
       fill: "#ffffff",
-      backgroundColor: "#000000",
+      backgroundColor: "#ffffff",
     }).setScrollFactor(0).setDepth(100);
 
-    this.role = this.physics.add
-                    .sprite(2*16, 2*16, "role")
+    this.role = this.physics.add.sprite(2*16, 2*16, "role")
                     .setDepth(100)
+                    .setScale(1.5)
                     .setGravityY(this.data.gravity)
                     .setCollideWorldBounds(true)
                     .setBounce(0);
@@ -48,7 +61,7 @@ class Demo extends Phaser.Scene {
     // 生成角色通用动画
     this.anims.create({
       key: 'run',
-      frames: this.anims.generateFrameNumbers('role', { frames: [ 0, 1, 2 ] }),
+      frames: this.anims.generateFrameNumbers('role', { frames: [ 0, 1, 2, 3 ] }),
       frameRate: 8,
       repeat: -1
     });
@@ -65,7 +78,10 @@ class Demo extends Phaser.Scene {
 
     // layer.setScale(2);
     this.layer = this.map.createBlankLayer("base", tiles)
-    this.map.setCollision([ 3, 5, 7, 11, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ]);
+    this.coinLayer = this.map.createBlankLayer("coin", tiles);
+    this.coinLayer.setTileIndexCallback(26, this.hitCoin, this);
+
+    this.layer.setCollision([ 3, 5, 7, 11, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 ]);
 
     // Add a simple scene with some random element
     // background
@@ -91,6 +107,8 @@ class Demo extends Phaser.Scene {
     if (!this.isGameStart()) return ; 
     // Any speed as long as 16 evenly divides by it
 
+    if (this.role.angle < 0) this.role.angle += 2.5; //下降时头朝下
+
     // 初始化
     this.sx = this.sx || 0;
     this.times = this.times || 0;
@@ -112,9 +130,11 @@ class Demo extends Phaser.Scene {
           tile = this.layer.getTileAt(x, y);
           
           this.layer.putTileAt(tile, x-1, y); 
-          
+          this.coinLayer.putTileAt(tile, x-1, y);
+
           if (x === this.data.mapWidth - 1) {
             this.layer.putTileAt(-1, x, y);
+            this.coinLayer.putTileAt(-1, x, y);
           }
         }
       }
@@ -134,6 +154,8 @@ class Demo extends Phaser.Scene {
 
     // 恢复镜头
     this.cameras.main.scrollX = this.sx;
+    // 背景
+    this.background.tilePositionX += (this.data.pace / 4);
   }
 
   refreshMap(value, index, array) {
@@ -160,9 +182,14 @@ class Demo extends Phaser.Scene {
     }
   }
 
+  hitCoin() {
+    console.info('hit coin');
+  }
+
   hitCheck(role, hitArea) {
     console.info(hitArea);
 
+    // 重置跳跃次数
     if (hitArea.index == 25) {
       this.jumpTimes = 2;
     }
@@ -282,6 +309,9 @@ class Demo extends Phaser.Scene {
     tileY = 20 - tileY;
 
     switch (objectToPlace) {
+      case 'coin': 
+        this.coinLayer.putTileAt(1, tileX, tileY, true);
+        break;
       case "flower":
         this.layer.putTileAt(15, tileX, tileY, true);
         break;
