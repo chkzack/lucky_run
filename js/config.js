@@ -1,6 +1,14 @@
 const params = {
     debug: true,
     hasPlayPoints: true,
+
+    baseMapWidth: 40,
+    mapWidth: 3 * 40,
+    mapHeight: 20,
+    distance: 0,
+    gravity: 800,
+    jump: -376,
+    pace: 1,
   
     // 通讯参数
     webSocket: undefined,
@@ -21,12 +29,6 @@ const params = {
     GAME_STOP: 2,
     gameState: this.GAME_INIT, 
     winner: false,
-  
-    gameSpeed: 200,
-    gameSpeedDelta: 2,
-    timeScale: 1.0,
-    gravity: 16,
-    pipeGens: 0,
   
     // 过关数
     count: 0,

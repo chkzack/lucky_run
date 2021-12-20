@@ -1,5 +1,5 @@
 /**
- * 初始场景
+ * 加载初始场景
  */
 class Boot extends Phaser.Scene {
     constructor() {
@@ -8,63 +8,77 @@ class Boot extends Phaser.Scene {
   
     preload() {
   
+      // 加载进度条
       this.loadingBar();
   
       //以下为要加载的资源
-      this.load.image("loading", "assets/preloader1.gif");
-  
-      this.load.image("background", "assets/background-ocean1.png"); //背景
-      this.load.image("ground", "assets/ground-ocean.png"); //地面
-      this.load.image("sky", "assets/sky-ocean.png"); //天花板
-  
-      this.load.image("title", "assets/title1.png"); //游戏标题
-      // { frameWidth: 32, frameHeight: 38 }  
-      // 29, 24, 3
-      this.load.spritesheet("fish", "assets/fish1.png", { frameWidth: 29, frameHeight: 24 , startFrame: 0, endFrame: 2}); //鱼
-  
-      this.load.image("btn", "assets/start-button.png"); //按钮
-      this.load.image("share", "assets/share-button1.png"); //分享按钮
+      this.debugGraphics = this.add.graphics();
+      this.data = this.scene.settings.data;
+      this.load.image("tiles", "assets/tilemaps/test_16.png");
+
+      // 角色
+      this.load.spritesheet("role", "assets/animations/role.png", { frameWidth: 32, frameHeight: 32 , startFrame: 0, endFrame: 3});
+
+      // 根据时间切换场景
+      this.hour = new Date().getHours;
+      if (Math.random() > 0.5) {
+      // if (hour >= 6 &&  hour >= 18) {
+        this.load.image("background", "assets/background.png");
+      } else {
+        this.load.image("background", "assets/background2.png");
+      }
+      
     }
   
     create() {
       this.data = this.scene.settings.data;
   
-      this.background = this.add.tileSprite(0, 0, game.config.width, game.config.height, "background").setOrigin(0, 0); //背景图
-      this.ground = this.add.tileSprite(0, game.config.height - 56, game.config.width, 56, "ground").setOrigin(0, 0); //地板
+      // 背景板
+      this.background = this.add.tileSprite(0, 0, 960, 524, 'background')
+                              .setOrigin(0, 0)
+                              .setScale(1, 0.6)
+                              .setDepth(0)
+                              .setAlpha(0.95)
+                              .setScrollFactor(0);
+
+      // 标题组
+      this.title = this.add.text(0, game.config.height/2 - 64, 'LUCKY RUN', {
+        fontSize: "48px",
+        padding: { x: 10, y: 5 },
+        fill: "#ffffff",
+      }).setScrollFactor(0)
+      .setDepth(100)
+      .setOrigin(0.5, 0.5)
+      //.setDisplayOrigin(0.5, 0.5)
+      .setTint(6);
   
-      // 标题
-      this.titleGroup = this.add.group();
-      let title = this.titleGroup.create(50, 100, "title").setOrigin(0, 0); 
-      let fish = this.titleGroup.create(240, 110, 'fish').setOrigin(0, 0); 
-  
-      // 生成鱼通用动画
-      this.anims.create({
-        key: 'swim',
-        frames: this.anims.generateFrameNumbers('fish', { frames: [ 0, 1, 2 ] }),
-        frameRate: 8,
-        repeat: -1
-      });
-      fish.play('swim');
-  
-      // TODO
+      // 动效
       this.tweens.add({
-        targets: this.titleGroup,
-        x: 70,
+        targets: this.title,
+        x: game.config.width,
         loop: true,
-        duration: 3000,
+        duration: 8000,
         ease: 'Quintic.easeInOut',
-        duration: 1200,
-        yoyo: true,
+        yoyo: false,
         repeat: -1,
       }); 
   
       /**
-       * 开始检测
+       * 检测游戏次数
        */
       this.data.checkPlayPoints(() => {
   
-        let btn = this.add.sprite(game.config.width/2, game.config.height/2 + 40, this.data.hasPlayPoints ? "btn" : "share").setInteractive();
-        btn.once('pointerup', function() {
+        this.message = this.add.text(game.config.width/2, game.config.height/2 + 64, (this.data.hasPlayPoints ? "点击开始" : "分享"), {
+          fontSize: "48px",
+          padding: { x: 10, y: 5 },
+          fill: "#ffffff",
+        }).setScrollFactor(0)
+        .setDepth(100)
+        .setOrigin(0.5, 0.5)
+        //.setDisplayOrigin(0.5, 0.5)
+        .setTint(0);
+
+        this.input.once('pointerdown', function() {
           //开始按钮
           if (this.data.hasPlayPoints) {
             this.data.historyScore = this.data.historyScore || 0;
@@ -95,12 +109,14 @@ class Boot extends Phaser.Scene {
     }
   
     update() {
-      this.background.tilePositionX -= 1;
-      this.ground.tilePositionX -= 2;
+      // 背景
+      this.background.tilePositionX += (this.data.pace / 4);
     }
   
+    /**
+     * 加载进度条
+     */
     loadingBar() {
-      // 加载进度条
       let progress = this.add.graphics();
   
       this.load.on('progress', function (value) {
