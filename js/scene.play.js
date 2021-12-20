@@ -7,65 +7,72 @@ class Play extends Phaser.Scene {
     }
   
     preload() {
+      this.debugGraphics = this.add.graphics();
+      this.data = this.scene.settings.data;
 
-      this.debug = this.add.graphics();
-  
-      // this.loadingBar();
-      // 50, 318, 2
-      this.load.spritesheet("pipe", "assets/pipes1.png", { frameWidth: 50, frameHeight: 318 }); //管道
-      this.load.bitmapFont("flappy_font", "assets/fonts/flappyfont/flappyfont.png", "assets/fonts/flappyfont/flappyfont.fnt");
-  
-      this.load.audio("fly_sound", "assets/flap.wav"); //飞翔的音效
-      this.load.audio("score_sound", "assets/score.wav"); //得分的音效
-      this.load.audio("hit_pipe_sound", "assets/pipe-hit.wav"); //撞击管道的音效
-      this.load.audio("hit_ground_sound", "assets/ouch.wav"); //撞击地面的音效
-  
-      this.load.image("ready_text", "assets/get-ready.png");
-      this.load.image("play_tip", "assets/instructions1.png");
-      this.load.image("game_over", "assets/gameover.png");
-      this.load.image("score_board", "assets/scoreboard_2.png");
+      this.load.spritesheet("tiles", "assets/base.png", { frameWidth: 16, frameHeight: 16 });
+
+      // 角色
+      this.load.spritesheet("role", "assets/animations/role.png", { frameWidth: 32, frameHeight: 32 , startFrame: 0, endFrame: 3});
+
+      // 根据时间切换场景
+      this.hour = new Date().getHours;
+      if (Math.random() > 0.5) {
+      // if (hour >= 6 &&  hour >= 18) {
+        this.load.image("background", "assets/background.png");
+      } else {
+        this.load.image("background", "assets/background2.png");
+      }
     }
   
     create() {
-      this.data = this.scene.settings.data;
-  
-      this.background = this.add
-                      .tileSprite(0, 0, game.config.width, game.config.height, "background")
-                      .setDisplayOrigin(0, 0)
-                      .setDepth(0); //背景图
-      this.ground = this.add
-                      .tileSprite(0, game.config.height - 16, game.config.width, 16, "ground")
-                      .setDisplayOrigin(0, 0)
-                      .setDepth(100); //地板
-  
-      this.groundGroup = this.physics.add.staticGroup();
-      this.groundGroup.add(this.ground);
-  
-      // 刷新静态地面
-      this.physics.add.existing(this.ground, true);
-      this.ground.body.updateFromGameObject();
-      
-      this.fish = this.physics.add
-                      .sprite(50, 150, "fish")
+
+      // 背景板
+      this.background = this.add.tileSprite(0, 0, 960, 524, 'background')
+                      .setOrigin(0, 0)
+                      .setScale(1, 0.6)
+                      .setDepth(0)
+                      .setAlpha(0.95)
+                      .setScrollFactor(0);
+
+      this.role = this.physics.add.sprite(2*16, 2*16, "role")
                       .setDepth(100)
-                      .setGravityY(0)
+                      .setScale(1)
+                      .setGravityY(this.data.gravity)
                       .setCollideWorldBounds(true)
-                      .setBounce(0)
-                      .play('swim');
-  
-      this.pipeGroup = this.physics.add.group();
-  
-      this.soundFly = this.sound.add("fly_sound");
-      this.soundScore = this.sound.add("score_sound");
-      this.soundHitPipe = this.sound.add("hit_pipe_sound");
-      this.soundHitGround = this.sound.add("hit_ground_sound");
+                      .setBounce(0);
+                      //.setVelocityY(this.data.gravity)
+                      // .setExistingBody(this.compoundBody);
+          
+      // 生成角色通用动画
+      this.anims.create({
+        key: 'jump',
+        frames: this.anims.generateFrameNumbers('role', { frames: [ 0, 1, 2, 3 ] }),
+        frameRate: 8,
+        repeat: -1
+      });
+      this.role.play('jump');
+
+      // 物品组
+      this.group = this.physics.add.staticGroup();
+
+      this.initLevel();
       
-  
-      this.physics.add.collider(this.fish, this.groundGroup, function() {
-        // console.info(new Date());
-        this.stopGame();
-      }, null, this); //与地面碰撞
-      this.physics.add.collider(this.fish, this.pipeGroup, this.hitGroundCheck, null, this); //与管道碰撞
+
+      // 10ms 定时任务
+      // 40*16 场景的过场时间为
+      // pace, time
+      // 1.6, 4000ms
+      // 1.8, 3500ms
+      // 2.1, 3000ms
+      // 2.56, 2500ms
+      // 3.2, 2000ms
+      // 4.27, 1500ms
+      // 6.4, 1000ms
+      this.timedEvent = this.time.addEvent({ delay: 10, callback: this.updateBlock, callbackScope: this, loop: true });
+
+      // 
+      this.physics.add.collider(this.role, this.group, this.hitCheck, null, this);
   
       // 开始匹配
       this.start();
@@ -74,19 +81,12 @@ class Play extends Phaser.Scene {
     update() {
       // 游戏未开始
       if (!this.data.isGameStart()) return;
+      
+      // 背景
+      this.background.tilePositionX += (this.data.pace / 4);
   
-      let scrollSpeed = parseInt(this.data.gameSpeed/100);
-      this.background.tilePositionX += scrollSpeed;
-      this.ground.tilePositionX += scrollSpeed;
-  
-      if (this.fish.angle < 90) this.fish.angle += 2.5; //下降时头朝下
-  
-      let checkList = this.pipeGroup.getMatching('active', true);
-  
-      // console.debug(checkList);
-      //分数检测和更新
-      checkList.forEach(this.checkScore, this); 
-      this.checkEnemyScore();
+      if (this.role.angle < 0) this.role.angle += 2.5; //下降时头朝下
+      this.role.setGravityY(this.data.gravity);
     }
   
     loadingBar() {
@@ -103,10 +103,96 @@ class Play extends Phaser.Scene {
           progress.destroy();
       }); 
     }
+
+    /**
+     * 更新
+     */
+    updateBlock() {
+      this.distance = this.distance || 0;
+
+      if (this.data.isGameStart()) {
+        this.distance += this.data.pace;
+
+        // 碰撞物左移
+        this.group.children.each(function(tile) {
+          tile.x -= this.data.pace;
+          tile.refreshBody();
+
+          // 出游戏左边删除
+          if (tile.x < -16) {
+            this.group.remove(tile, true, true);
+          }
+        }, this);
+
+        // 最终回则不算
+        if (this.distance - 640 >= 0) {
+          this.distance = 0;
+          this.pickNextLevel();
+        }
+      }
+    }
   
+    /**
+     * 初始化游戏关卡
+     */
+    initLevel() {
+      
+      console.info('init');
+      // 初始生成3关
+      this.level = this.level || 3;
+  
+      this.data.parser.genLevel(2, this.group, true, 'block', 40, 0, null, null);
+      this.data.parser.genLevel(2, this.group, true, 'coin', 40, 0, null, null);
+
+      for (let y=18; y<20; y++) {
+        for (let x=0; x<120; x++) {
+          let tile = this.group.create(16*x, 16*y, 'tiles', 4, true, true).setName('block').setOrigin(0, 0).setDepth(50);
+        }
+      }
+
+    }
+    /**
+     *10ms 定时任务
+      40*16 场景的过场时间为
+      pace, time
+      1.6, 4000ms
+      1.8, 3500ms
+      2.1, 3000ms
+      2.56, 2500ms
+      3.2, 2000ms
+      4.27, 1500ms
+      6.4, 1000ms
+     */
+    pickNextLevel() {
+      // 抽取下一个地图进行渲染
+      console.info('gen');
+      this.endTime = new Date();
+      this.interval = this.endTime - this.startTime;
+      this.startTime = new Date();
+  
+      // 生成
+      this.data.parser.genAll(this.level, this.group);
+  
+      ++this.levels;
+       
+      if (this.levels >= 17) {
+        this.data.pace = 3.2;
+      } else if (this.levels >= 11) {
+        this.data.pace = 2.1;
+      } else if (this.levels >= 5) {
+        this.data.pace = 1.8;
+      }
+    }
+  
+
     // 模拟匹配
     match() {
-      this.matchingText = this.add.bitmapText(game.config.width/2 + 20, 80, "flappy_font", "MATCHING", 50)
+      this.matchingText = this.add.bitmapText(game.config.width/2 + 20, 80, {
+                                    fontSize: "18px",
+                                    padding: { x: 10, y: 5 },
+                                    fill: "#ffffff",
+                                    backgroundColor: "#000000",
+                                  }, "MATCHING", 50)
                                   .setOrigin(0.5, 0.5)
                                   .setAlpha(0.8)
                                   .setScale(1.2)
@@ -174,74 +260,99 @@ class Play extends Phaser.Scene {
     }
   
     start() {
-      this.input.once('pointerdown', this.startGame, this); 
+      this.input.once('pointerdown', this.startGame, this);
     }
   
     startGame() {
-      console.info(new Date(), this.fish.y)
+      console.info(new Date(), this.role.y)
       // this.readyText.destroy();
       //this.playTip.destroy();
   
       this.data.setGameStart();
   
-      this.scoreText = this.add.bitmapText(game.config.width / 2 - 20, 50, "flappy_font", "0", 36).setDepth(100);
-      this.enemyScoreText = this.add.bitmapText(game.config.width / 2 + 90, 20, "flappy_font", "VS 0", 20).setDepth(100);
-      this.enemyScoreText.setTint(0xffffff, 0xffffff, 0xff5555, 0xff5555);
+      // this.scoreText = this.add.bitmapText(game.config.width / 2 - 20, 50, {
+      //                             fontSize: "18px",
+      //                             padding: { x: 10, y: 5 },
+      //                             fill: "#ffffff",
+      //                           }, "0", 36).setDepth(100);
+      // this.enemyScoreText = this.add.bitmapText(game.config.width / 2 + 90, 20, "flappy_font", "VS 0", 20).setDepth(100);
+      // this.enemyScoreText.setTint(0xffffff, 0xffffff, 0xff5555, 0xff5555);
   
       // 事件
-      this.fish.setGravityY(this.data.gravity);
-      this.input.on('pointerdown', this.swim, this);
-  
-      // 生成地图块
-      this.time.addEvent({
-        delay: 1000,
-        loop: true,
-        callback: this.generateTileMapBlock,
-        callbackScope: this,
-        timeScale: this.data.timeScale
-      })
+      this.input.on('pointerdown', this.jump, this);
     }
   
     stopGame() {
       this.data.setGameStop();
   
-      this.scoreText.destroy();
-      this.enemyScoreText.destroy(); 
+      // this.scoreText.destroy();
+      // this.enemyScoreText.destroy(); 
       
-      this.pipeGroup.setVelocity(0, 0);
-      this.fish.anims.stop("swim", 0);
-      this.input.off('pointerdown', this.swim, this);
+      this.role.anims.stop("jump", 0);
+      this.input.off('pointerdown', this.jump, this);
       this.time.shutdown();
     }  
   
-    swim() {
-      this.fish.setVelocityY(-this.data.gravity);
-      //上升时头朝上
-      this.tweens.add({
-        targets: this.fish,
-        angle: -30,
-        duration: 100
-      });
+    /**
+     * 角色跳跃
+     */
+    jump() {
+      if (this.jumpTimes === undefined) {
+        this.jumpTimes = 2;
+      }
   
-      this.soundFly.play();
+      if (this.jumpTimes > 0) {
+        --this.jumpTimes;
+  
+        this.role.play('jump');
+
+        this.role.setVelocityY(this.data.jump);
+        //this.role.setGravityY(this.data.jump);
+        //上升时头朝上
+        this.tweens.add({
+          targets: this.role,
+          angle: -15,
+          duration: 100
+        });
+  
+        this.role.stop('jump');
+        // this.soundFly.play();
+      }
     }
   
-    hitPipeCheck() {
+    /**
+     * 
+     * @returns 
+     */
+    hitCheck(role, tile) {
       if (this.data.isGameStop()) return;
-      this.soundHitPipe.play();
-      this.gameOver();
-    }
-  
-    hitGroundCheck() {
-      if (this.data.isGameStop()) return;
-      this.soundHitGround.play();
+      console.info('hit');
+
+      if (tile.body.touching.up && tile.name == 'block') {
+        this.jumpTimes = 2;
+        return;
+      }
+
+      if (tile.name == 'coin') {
+        this.score++;
+        return;
+      }
+
       this.gameOver();
     }
   
     gameOver() {
-      this.gap = undefined;
       this.data.setGameStop();
       this.stopGame();
+
+      this.role.setCollideWorldBounds(false);
+      this.group.setActive(false);
+      this.tweens.add({
+        targets: this.role,
+        y: 100,
+        ease: 'Sine.easeInOut',
+        duration: 1000
+      });
       
       this.submitResult();
     }
@@ -331,18 +442,12 @@ class Play extends Phaser.Scene {
     // 生成区块地图
     generateTileMapBlock() {
   
-      console.info(new Date(), this.fish.y)
+      console.info(new Date(), this.role.y)
       // 使用回收
       // if (this.resetPipe(topPipeY, bottomPipeY)) return;
       // console.debug(topPipeY, bottomPipeY);
   
       // this.pipeGroup.setVelocity(-this.data.gameSpeed, 0);
-    }
-  
-    resetPipe(topPipeY, bottomPipeY) {
-      // 重置边界地图块
-  
-      // 如果 
     }
   
     // 检测分数

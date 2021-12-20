@@ -1,6 +1,7 @@
 const params = {
     debug: true,
     hasPlayPoints: true,
+    parser: PARSER,
 
     baseMapWidth: 40,
     mapWidth: 3 * 40,
@@ -8,7 +9,7 @@ const params = {
     distance: 0,
     gravity: 800,
     jump: -376,
-    pace: 1,
+    pace: 3.2,
   
     // 通讯参数
     webSocket: undefined,

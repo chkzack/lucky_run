@@ -14,7 +14,7 @@ class Boot extends Phaser.Scene {
       //以下为要加载的资源
       this.debugGraphics = this.add.graphics();
       this.data = this.scene.settings.data;
-      this.load.image("tiles", "assets/tilemaps/test_16.png");
+      this.load.spritesheet("tiles", "assets/base.png", { frameWidth: 16, frameHeight: 16 });
 
       // 角色
       this.load.spritesheet("role", "assets/animations/role.png", { frameWidth: 32, frameHeight: 32 , startFrame: 0, endFrame: 3});
@@ -32,6 +32,8 @@ class Boot extends Phaser.Scene {
   
     create() {
       this.data = this.scene.settings.data;
+
+      this.data.parser.init();
   
       // 背景板
       this.background = this.add.tileSprite(0, 0, 960, 524, 'background')
@@ -40,6 +42,15 @@ class Boot extends Phaser.Scene {
                               .setDepth(0)
                               .setAlpha(0.95)
                               .setScrollFactor(0);
+
+      this.group = this.physics.add.staticGroup();
+
+      for (let y=18; y<20; y++) {
+        for (let x=0; x<40; x++) {
+          let tile = this.group.create(16*x, 16*y, 'tiles', 4).setOrigin(0, 0);
+        }
+      }
+      
 
       // 标题组
       this.title = this.add.text(0, game.config.height/2 - 64, 'LUCKY RUN', {
@@ -104,8 +115,10 @@ class Boot extends Phaser.Scene {
           }
         }, this);
         
-        btn.setOrigin(0.5, 0.5);
+        // btn.setOrigin(0.5, 0.5);
       });
+
+      this.data.parser.genLevel('fin', this.group, true, 'block', 0, 0, 40, 20);
     }
   
     update() {
@@ -113,6 +126,15 @@ class Boot extends Phaser.Scene {
       this.background.tilePositionX += (this.data.pace / 4);
     }
   
+    updateBlock() {
+      this.group.children.each(function(gameObject) {
+        gameObject.x -= 2;
+        if (gameObject.x < -16) {
+          this.group.remove(gameObject, true, true);
+        }
+      }, this)
+    }
+
     /**
      * 加载进度条
      */
