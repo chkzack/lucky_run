@@ -7,7 +7,7 @@ const params = {
     mapWidth: 3 * 40,
     mapHeight: 20,
     distance: 0,
-    gravity: -800,
+    gravity: 800,
     jump: -376,
     pace: 1.6,
     timeCountdown: 120000, // ms
