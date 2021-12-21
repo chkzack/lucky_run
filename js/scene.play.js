@@ -34,11 +34,28 @@ class Play extends Phaser.Scene {
       }).setScrollFactor(0).setDepth(100);
 
       // 星钻加成
-      this.buffText = this.add.text(16*30, 16, this.data, {
+      this.buffText = this.add.text(game.config.width/2, 16, this.data, {
         fontSize: "18px",
         fill: "#ffaaaa",
       }).setScrollFactor(0).setDepth(100).setOrigin(0.5, 0.5);
-      this.buffText.setText('3% UP!')
+      this.buffText.setText('3% UP!');
+
+      this.tweens.add({
+        targets: this.buffText,
+        delay: 0,
+        x: 16*30,
+        y: 16,
+        duration: 1000,
+        ease: 'Power0',
+        easeParams: null,
+        hold: 0,
+        repeat: 0,
+        repeatDelay: 0,
+        yoyo: false,
+        flipX: false,
+        flipY: false
+      });
+
 
       // 倒计时
       this.timeCountdownText = this.add.text(16*10, 16*5, this.data, {
@@ -50,9 +67,9 @@ class Play extends Phaser.Scene {
       // 背景板
       this.background = this.add.tileSprite(0, 0, 960, 524, 'background')
                       .setOrigin(0, 0)
-                      .setScale(1, 0.6)
+                      .setScale(1, 0.65)
                       .setDepth(0)
-                      .setAlpha(0.95)
+                      .setAlpha(0.75)
                       .setScrollFactor(0);
 
       this.role = this.physics.add.sprite(2*16, 2*16, "role")
@@ -60,7 +77,8 @@ class Play extends Phaser.Scene {
                       .setScale(1)
                       .setGravityY(this.data.gravity)
                       // .setCollideWorldBounds(true)
-                      .setBounce(0);
+                      .setBounce(0)
+                      .setSize(16,30);
                   
           
       // 生成角色通用动画
@@ -104,7 +122,7 @@ class Play extends Phaser.Scene {
       // 背景
       this.background.tilePositionX += (this.data.pace / 4);
   
-      if (this.role.angle < 0) this.role.angle += 2.5; //下降时头朝下
+      if (this.role.angle < 0) this.role.angle += 4.5; //下降时头朝下
       this.role.setGravityY(this.data.gravity);
 
       this.text.setText("Distance: " + (this.distance || 0) + "px, level:" + (this.level || 0) + ", cost: " + (this.interval || 0) + "ms");
@@ -171,15 +189,19 @@ class Play extends Phaser.Scene {
       
       // 初始生成3关
       this.level = this.level || 3;
-  
+
+      for (let y=18; y<20; y++) {
+        for (let x=0; x<40; x++) {
+          let tile = this.group.create(16*x, 16*y, 'tiles', 4, true, true).setName('block').setOrigin(0, 0).setDepth(50);
+          tile.refreshBody();
+        }
+      }
+
       this.data.parser.genLevel(2, this.group, true, 'block', 40, 0, null, null);
       this.data.parser.genLevel(2, this.group, true, 'coin', 40, 0, null, null);
 
-      for (let y=18; y<20; y++) {
-        for (let x=0; x<120; x++) {
-          let tile = this.group.create(16*x, 16*y, 'tiles', 4, true, true).setName('block').setOrigin(0, 0).setDepth(50);
-        }
-      }
+      this.data.parser.genLevel(3, this.group, true, 'block', 80, 0, null, null);
+      this.data.parser.genLevel(3, this.group, true, 'coin', 80, 0, null, null);
 
     }
     /**
@@ -201,10 +223,9 @@ class Play extends Phaser.Scene {
       this.interval = this.endTime - this.startTime;
       this.startTime = new Date();
       
+      ++this.level;
       // 生成
       this.data.parser.genAll(this.level, this.group);
-  
-      ++this.level;
       
       if (this.level > 41) {
         this.data.pace = 6.4;
@@ -300,7 +321,7 @@ class Play extends Phaser.Scene {
     }
   
     startGame() {
-      console.info(new Date(), this.role.y)
+      //console.info(new Date(), this.role.y)
       // this.readyText.destroy();
       //this.playTip.destroy();
   
@@ -347,7 +368,7 @@ class Play extends Phaser.Scene {
         //上升时头朝上
         this.tweens.add({
           targets: this.role,
-          angle: -15,
+          angle: -45,
           duration: 100
         });
   
@@ -362,7 +383,6 @@ class Play extends Phaser.Scene {
      */
     hitCheck(role, tile) {
       if (this.data.isGameStop()) return;
-      console.info('hit');
 
       if (tile.body.touching.up && tile.name == 'block') {
         this.jumpTimes = 2;
@@ -385,9 +405,9 @@ class Play extends Phaser.Scene {
       this.group.setActive(false);
       this.tweens.add({
         targets: this.role,
-        y: 100,
-        ease: 'Sine.easeInOut',
-        duration: 1000
+        y: this.role.y - 50,
+        ease: 'ease',
+        duration: 300,
       });
       
       this.submitResult();

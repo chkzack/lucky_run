@@ -21,8 +21,7 @@ class Boot extends Phaser.Scene {
 
       // 根据时间切换场景
       this.hour = new Date().getHours;
-      if (Math.random() > 0.5) {
-      // if (hour >= 6 &&  hour >= 18) {
+      if (this.hour >= 6 &&  this.hour <= 18) {
         this.load.image("background", "assets/background.png");
       } else {
         this.load.image("background", "assets/background2.png");
@@ -38,7 +37,7 @@ class Boot extends Phaser.Scene {
       // 背景板
       this.background = this.add.tileSprite(0, 0, 960, 524, 'background')
                               .setOrigin(0, 0)
-                              .setScale(1, 0.6)
+                              .setScale(1, 0.65)
                               .setDepth(0)
                               .setAlpha(0.95)
                               .setScrollFactor(0);
@@ -46,48 +45,116 @@ class Boot extends Phaser.Scene {
       this.group = this.physics.add.staticGroup();
 
       for (let y=18; y<20; y++) {
-        for (let x=0; x<40; x++) {
+        for (let x=0; x<80; x++) {
           let tile = this.group.create(16*x, 16*y, 'tiles', 4).setOrigin(0, 0);
+          tile.refreshBody();
         }
       }
       
+      this.role = this.add.sprite(128, 16*16, "role")
+                      .setDepth(100)
+                      .setScale(1.5);
+                  
+          
+      // 生成角色通用动画
+      this.anims.create({
+        key: 'jump',
+        frames: this.anims.generateFrameNumbers('role', { frames: [ 0, 1, 2, 3 ] }),
+        frameRate: 8,
+        repeat: -1
+      });
+      this.role.play('jump');
+
+      this.tweens.timeline({
+        targets: this.role,
+        loop: -1,
+        tweens: [
+        {
+            x: 256,
+            y: 16*16,
+            ease: 'Sine.easeOut',
+            duration: 1000,
+            offset: 0,
+        },
+        {
+            y: 10*16,
+            x: 290,
+            angle: -15,
+            ease: 'Expo',
+            duration: 1000,
+        },
+        {
+            y: 16*16,
+            x: 280,
+            angle: 15,
+            ease: 'Expo',
+            duration: 500
+        },
+        {
+          y: 16*16,
+          x: 270,
+          angle: -15,
+          ease: 'Expo',
+          duration: 200
+        },
+        {
+            x: 128,
+            y: 16*16,
+            angle: 0,
+            ease: 'Sine.easeOut',
+            duration: 3000
+        }
+        ]
+
+    });
+
 
       // 标题组
-      this.title = this.add.text(0, game.config.height/2 - 64, 'LUCKY RUN', {
+      this.title = this.add.text(0, 48, 'LUCKY RUN', {
         fontSize: "48px",
         padding: { x: 10, y: 5 },
-        fill: "#ffffff",
+        fill: "#fff",
       }).setScrollFactor(0)
       .setDepth(100)
-      .setOrigin(0.5, 0.5)
-      //.setDisplayOrigin(0.5, 0.5)
-      .setTint(6);
+      .setOrigin(0, 0);
   
       // 动效
       this.tweens.add({
         targets: this.title,
-        x: game.config.width,
+        x: game.config.width/2,
         loop: true,
-        duration: 8000,
+        duration: 16000,
         ease: 'Quintic.easeInOut',
-        yoyo: false,
+        yoyo: true,
         repeat: -1,
-      }); 
+        repeatDelay: 1000,
+      });
   
       /**
        * 检测游戏次数
        */
       this.data.checkPlayPoints(() => {
   
-        this.message = this.add.text(game.config.width/2, game.config.height/2 + 64, (this.data.hasPlayPoints ? "点击开始" : "分享"), {
-          fontSize: "48px",
-          padding: { x: 10, y: 5 },
-          fill: "#ffffff",
+        this.message = this.add.text(16*20, 128, (this.data.hasPlayPoints ? "点击开始" : "分享"), { 
+          font: "24px Arial Black", 
+          fill: "#fff",
         }).setScrollFactor(0)
         .setDepth(100)
-        .setOrigin(0.5, 0.5)
-        //.setDisplayOrigin(0.5, 0.5)
-        .setTint(0);
+        .setOrigin(0, 0);
+
+        this.message.setStroke('#f77234', 16);
+        this.message.setShadow(2, 2, "#333333", 2, true, true);
+
+        this.tweens.add({
+          delay: 2000,
+          targets: this.message,
+          x: this.message.x + 20,
+          duration: 500,
+          ease: 'Quintic.easeInOut',
+          yoyo: true,
+          repeat: -1,
+          repeatDelay: 4000,
+        });
 
         this.input.once('pointerdown', function() {
           //开始按钮
@@ -98,7 +165,7 @@ class Boot extends Phaser.Scene {
             // 切换场景
             this.scene.transition({
               target: 'play', 
-              duration: 1000,
+              duration: 200,
               allowInput: false,
               remove: true,
               moveAbove: true,

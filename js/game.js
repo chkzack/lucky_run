@@ -13,7 +13,7 @@
     height: 16 * params.mapHeight,
     zoom: 1,
   },
-  pixelArt: false,
+  pixelArt: true,
   physics: {
     default: "arcade",
     arcade: {
