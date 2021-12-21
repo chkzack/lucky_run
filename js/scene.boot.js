@@ -117,8 +117,6 @@ class Boot extends Phaser.Scene {
         
         // btn.setOrigin(0.5, 0.5);
       });
-
-      this.data.parser.genLevel('fin', this.group, true, 'block', 0, 0, 40, 20);
     }
   
     update() {

@@ -27,6 +27,26 @@ class Play extends Phaser.Scene {
   
     create() {
 
+      // 距离测试
+      this.text = this.add.text(16, 16, this.data, {
+        fontSize: "12px",
+        fill: "#ffffff",
+      }).setScrollFactor(0).setDepth(100);
+
+      // 星钻加成
+      this.buffText = this.add.text(16*30, 16, this.data, {
+        fontSize: "18px",
+        fill: "#ffaaaa",
+      }).setScrollFactor(0).setDepth(100).setOrigin(0.5, 0.5);
+      this.buffText.setText('3% UP!')
+
+      // 倒计时
+      this.timeCountdownText = this.add.text(16*10, 16*5, this.data, {
+        fontSize: "24px",
+        fill: "#ffffff",
+      }).setScrollFactor(0).setDepth(100).setOrigin(0.5, 0.5).setAlpha(0.5);
+      this.timeCountdown = this.data.timeCountdown;
+
       // 背景板
       this.background = this.add.tileSprite(0, 0, 960, 524, 'background')
                       .setOrigin(0, 0)
@@ -39,10 +59,9 @@ class Play extends Phaser.Scene {
                       .setDepth(100)
                       .setScale(1)
                       .setGravityY(this.data.gravity)
-                      .setCollideWorldBounds(true)
+                      // .setCollideWorldBounds(true)
                       .setBounce(0);
-                      //.setVelocityY(this.data.gravity)
-                      // .setExistingBody(this.compoundBody);
+                  
           
       // 生成角色通用动画
       this.anims.create({
@@ -87,6 +106,10 @@ class Play extends Phaser.Scene {
   
       if (this.role.angle < 0) this.role.angle += 2.5; //下降时头朝下
       this.role.setGravityY(this.data.gravity);
+
+      this.text.setText("Distance: " + (this.distance || 0) + "px, level:" + (this.level || 0) + ", cost: " + (this.interval || 0) + "ms");
+
+      this.timeCountdownText.setText(''+ parseInt(this.timeCountdown/60000) + ':' + parseInt(this.timeCountdown/1000%60) +':' + parseInt(this.timeCountdown%1000));
     }
   
     loadingBar() {
@@ -109,6 +132,13 @@ class Play extends Phaser.Scene {
      */
     updateBlock() {
       this.distance = this.distance || 0;
+      this.timeCountdown -= 10;
+
+      // 时间到结束游戏
+      if (this.timeCountdown <= 0) {
+        this.gameOver();
+        return;
+      }
 
       if (this.data.isGameStart()) {
         this.distance += this.data.pace;
@@ -116,7 +146,9 @@ class Play extends Phaser.Scene {
         // 碰撞物左移
         this.group.children.each(function(tile) {
           tile.x -= this.data.pace;
-          tile.refreshBody();
+          if (tile.body != undefined && tile.body != null) {
+            tile.refreshBody();
+          }
 
           // 出游戏左边删除
           if (tile.x < -16) {
@@ -137,7 +169,6 @@ class Play extends Phaser.Scene {
      */
     initLevel() {
       
-      console.info('init');
       // 初始生成3关
       this.level = this.level || 3;
   
@@ -169,19 +200,24 @@ class Play extends Phaser.Scene {
       this.endTime = new Date();
       this.interval = this.endTime - this.startTime;
       this.startTime = new Date();
-  
+      
       // 生成
       this.data.parser.genAll(this.level, this.group);
   
-      ++this.levels;
-       
-      if (this.levels >= 17) {
+      ++this.level;
+      
+      if (this.level > 41) {
+        this.data.pace = 6.4;
+      } else if (this.level > 27) {
+        this.data.pace = 4.27;
+      } else if (this.level > 17) {
         this.data.pace = 3.2;
-      } else if (this.levels >= 11) {
+      } else if (this.level > 11) {
         this.data.pace = 2.1;
-      } else if (this.levels >= 5) {
+      } else if (this.level > 5) {
         this.data.pace = 1.8;
       }
+      
     }
   
 
@@ -437,17 +473,6 @@ class Play extends Phaser.Scene {
         window.location.href = this.data.shareLink();
       }, this);
   
-    }
-  
-    // 生成区块地图
-    generateTileMapBlock() {
-  
-      console.info(new Date(), this.role.y)
-      // 使用回收
-      // if (this.resetPipe(topPipeY, bottomPipeY)) return;
-      // console.debug(topPipeY, bottomPipeY);
-  
-      // this.pipeGroup.setVelocity(-this.data.gameSpeed, 0);
     }
   
     // 检测分数

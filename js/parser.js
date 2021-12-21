@@ -114,16 +114,168 @@ const PARSER = {
             let tileIndex = this.tileMap.get(matIndex);
 
             // 增加图块坐标点
-            this.setMap(levelConfig, tileIndex, pos.x, pos.y);
-
+            
             // 四方砖块
             if (tileIndex == 24) {
+                this.setMap(levelConfig, tileIndex, pos.x, pos.y);
                 this.setMap(levelConfig, 25, pos.x+1, pos.y);
                 this.setMap(levelConfig, 11, pos.x, pos.y-1);
                 this.setMap(levelConfig, 12, pos.x+1, pos.y-1);
-            }
+            } else if (tileIndex == 65) {
+                // 车站1
+                this.setMap(levelConfig, 65, pos.x, pos.y);
+                this.setMap(levelConfig, 66, pos.x+1, pos.y);
+                this.setMap(levelConfig, 67, pos.x+2, pos.y);
+                this.setMap(levelConfig, 68, pos.x+3, pos.y);
 
-            // 车站 TODO
+                this.setMap(levelConfig, 72, pos.x+4, pos.y);
+                this.setMap(levelConfig, 73, pos.x+5, pos.y);
+                this.setMap(levelConfig, 74, pos.x+6, pos.y);
+                this.setMap(levelConfig, 75, pos.x+7, pos.y);
+                
+                this.setMap(levelConfig, 52, pos.x, pos.y-1);
+                this.setMap(levelConfig, 53, pos.x+1, pos.y-1);
+                this.setMap(levelConfig, 54, pos.x+2, pos.y-1);
+                this.setMap(levelConfig, 55, pos.x+3, pos.y-1);
+
+                this.setMap(levelConfig, 59, pos.x+4, pos.y-1);
+                this.setMap(levelConfig, 60, pos.x+5, pos.y-1);
+                this.setMap(levelConfig, 61, pos.x+6, pos.y-1);
+                this.setMap(levelConfig, 62, pos.x+7, pos.y-1);
+                
+                this.setMap(levelConfig, 39, pos.x, pos.y-2);
+                this.setMap(levelConfig, 40, pos.x+1, pos.y-2);
+                this.setMap(levelConfig, 41, pos.x+2, pos.y-2);
+                this.setMap(levelConfig, 42, pos.x+3, pos.y-2);
+
+                this.setMap(levelConfig, 46, pos.x+4, pos.y-2);
+                this.setMap(levelConfig, 47, pos.x+5, pos.y-2);
+                this.setMap(levelConfig, 48, pos.x+6, pos.y-2);
+                this.setMap(levelConfig, 49, pos.x+7, pos.y-2);
+                
+                this.setMap(levelConfig, 26, pos.x, pos.y-3);
+                this.setMap(levelConfig, 27, pos.x+1, pos.y-3);
+                this.setMap(levelConfig, 28, pos.x+2, pos.y-3);
+                this.setMap(levelConfig, 29, pos.x+3, pos.y-3);
+
+                this.setMap(levelConfig, 33, pos.x+4, pos.y-3);
+                this.setMap(levelConfig, 34, pos.x+5, pos.y-3);
+                this.setMap(levelConfig, 35, pos.x+6, pos.y-3);
+                this.setMap(levelConfig, 36, pos.x+7, pos.y-3);
+            } else if (tileIndex == 66) {
+                // 车站2
+                this.setMap(levelConfig, 65, pos.x, pos.y);
+                this.setMap(levelConfig, 66, pos.x+1, pos.y);
+                this.setMap(levelConfig, 67, pos.x+2, pos.y);
+                this.setMap(levelConfig, 69, pos.x+3, pos.y);
+                this.setMap(levelConfig, 70, pos.x+4, pos.y);
+                this.setMap(levelConfig, 71, pos.x+5, pos.y);
+                this.setMap(levelConfig, 73, pos.x+6, pos.y);
+                this.setMap(levelConfig, 74, pos.x+7, pos.y);
+                this.setMap(levelConfig, 75, pos.x+8, pos.y);
+                this.setMap(levelConfig, 76, pos.x+9, pos.y);
+
+                
+                this.setMap(levelConfig, 52, pos.x, pos.y-1);
+                this.setMap(levelConfig, 53, pos.x+1, pos.y-1);
+                this.setMap(levelConfig, 54, pos.x+2, pos.y-1);
+                this.setMap(levelConfig, 56, pos.x+3, pos.y-1);
+                this.setMap(levelConfig, 57, pos.x+4, pos.y-1);
+                this.setMap(levelConfig, 58, pos.x+5, pos.y-1);
+                this.setMap(levelConfig, 60, pos.x+6, pos.y-1);
+                this.setMap(levelConfig, 61, pos.x+7, pos.y-1);
+                this.setMap(levelConfig, 62, pos.x+8, pos.y-1);
+                this.setMap(levelConfig, 62, pos.x+9, pos.y-1);
+
+                
+                this.setMap(levelConfig, 39, pos.x, pos.y-2);
+                this.setMap(levelConfig, 40, pos.x+1, pos.y-2);
+                this.setMap(levelConfig, 41, pos.x+2, pos.y-2);
+                this.setMap(levelConfig, 43, pos.x+3, pos.y-2);
+                this.setMap(levelConfig, 44, pos.x+4, pos.y-2);
+                this.setMap(levelConfig, 45, pos.x+5, pos.y-2);
+                this.setMap(levelConfig, 47, pos.x+6, pos.y-2);
+                this.setMap(levelConfig, 48, pos.x+7, pos.y-2);
+                this.setMap(levelConfig, 49, pos.x+8, pos.y-2);
+                this.setMap(levelConfig, 50, pos.x+9, pos.y-2);
+
+                
+                this.setMap(levelConfig, 26, pos.x, pos.y-3);
+                this.setMap(levelConfig, 27, pos.x+1, pos.y-3);
+                this.setMap(levelConfig, 28, pos.x+2, pos.y-3);
+                this.setMap(levelConfig, 30, pos.x+3, pos.y-3);
+                this.setMap(levelConfig, 31, pos.x+4, pos.y-3);
+                this.setMap(levelConfig, 32, pos.x+5, pos.y-3);
+                this.setMap(levelConfig, 34, pos.x+6, pos.y-3);
+                this.setMap(levelConfig, 35, pos.x+7, pos.y-3);
+                this.setMap(levelConfig, 36, pos.x+8, pos.y-3);
+                this.setMap(levelConfig, 37, pos.x+9, pos.y-3);
+            } else if (tileIndex == 67) {
+                // 车站3
+
+                this.setMap(levelConfig, 65, pos.x, pos.y);
+                this.setMap(levelConfig, 66, pos.x+1, pos.y);
+                this.setMap(levelConfig, 67, pos.x+2, pos.y);
+                this.setMap(levelConfig, 68, pos.x+3, pos.y);
+                this.setMap(levelConfig, 69, pos.x+4, pos.y);
+                this.setMap(levelConfig, 70, pos.x+5, pos.y);
+                this.setMap(levelConfig, 71, pos.x+6, pos.y);
+                this.setMap(levelConfig, 72, pos.x+7, pos.y);
+                this.setMap(levelConfig, 73, pos.x+8, pos.y);
+                this.setMap(levelConfig, 74, pos.x+9, pos.y);
+                this.setMap(levelConfig, 75, pos.x+10, pos.y);
+                this.setMap(levelConfig, 76, pos.x+11, pos.y);
+
+                
+                this.setMap(levelConfig, 52, pos.x, pos.y-1);
+                this.setMap(levelConfig, 53, pos.x+1, pos.y-1);
+                this.setMap(levelConfig, 54, pos.x+2, pos.y-1);
+                this.setMap(levelConfig, 55, pos.x+3, pos.y-1);
+                this.setMap(levelConfig, 56, pos.x+4, pos.y-1);
+                this.setMap(levelConfig, 57, pos.x+5, pos.y-1);
+                this.setMap(levelConfig, 58, pos.x+6, pos.y-1);
+                this.setMap(levelConfig, 59, pos.x+7, pos.y-1);
+                this.setMap(levelConfig, 60, pos.x+8, pos.y-1);
+                this.setMap(levelConfig, 61, pos.x+9, pos.y-1);
+                this.setMap(levelConfig, 62, pos.x+10, pos.y-1);
+                this.setMap(levelConfig, 63, pos.x+11, pos.y-1);
+
+                
+                this.setMap(levelConfig, 39, pos.x, pos.y-2);
+                this.setMap(levelConfig, 40, pos.x+1, pos.y-2);
+                this.setMap(levelConfig, 41, pos.x+2, pos.y-2);
+                this.setMap(levelConfig, 42, pos.x+3, pos.y-2);
+                this.setMap(levelConfig, 43, pos.x+4, pos.y-2);
+                this.setMap(levelConfig, 44, pos.x+5, pos.y-2);
+                this.setMap(levelConfig, 45, pos.x+6, pos.y-2);
+                this.setMap(levelConfig, 46, pos.x+7, pos.y-2);
+                this.setMap(levelConfig, 47, pos.x+8, pos.y-2);
+                this.setMap(levelConfig, 48, pos.x+9, pos.y-2);
+                this.setMap(levelConfig, 49, pos.x+10, pos.y-2);
+                this.setMap(levelConfig, 50, pos.x+11, pos.y-2);
+
+
+                this.setMap(levelConfig, 26, pos.x, pos.y-3);
+                this.setMap(levelConfig, 27, pos.x+1, pos.y-3);
+                this.setMap(levelConfig, 28, pos.x+2, pos.y-3);
+                this.setMap(levelConfig, 29, pos.x+3, pos.y-3);
+                this.setMap(levelConfig, 30, pos.x+4, pos.y-3);
+                this.setMap(levelConfig, 31, pos.x+5, pos.y-3);
+                this.setMap(levelConfig, 32, pos.x+6, pos.y-3);
+                this.setMap(levelConfig, 33, pos.x+7, pos.y-3);
+                this.setMap(levelConfig, 34, pos.x+8, pos.y-3);
+                this.setMap(levelConfig, 35, pos.x+9, pos.y-3);
+                this.setMap(levelConfig, 36, pos.x+10, pos.y-3);
+                this.setMap(levelConfig, 37, pos.x+11, pos.y-3);
+            }
+            // else if (tileIndex == 77) {
+            //     // 水塘
+            //     this.setMap(levelConfig, 77, pos.x, pos.y);
+            //     this.setMap(levelConfig, 64, pos.x, pos.y-1);
+            // } 
+            else {
+                this.setMap(levelConfig, tileIndex, pos.x, pos.y);
+            }
         }
 
         // 图块补充解析处理
@@ -227,7 +379,11 @@ const PARSER = {
         let block2gen = targetMap.get(level.toString());
 
         if (block2gen == undefined) {
-            return;
+            if (target == 'block') {    
+                block2gen = targetMap.get('fin');
+            } else {
+                return;
+            }
         }
 
         let trapMap = new Map();
@@ -241,9 +397,16 @@ const PARSER = {
                     trapMap.set(pos.x, pos.y);
                 }
 
+                let name = this.tileType.get(tileIndex);
+                
                 // 检测碰撞
-                staticGroup.create((pos.x + tileX)*16, (pos.y + tileY)*16, 'tiles', parseInt(tileIndex), true, true)
-                            .setOrigin(0, 0).setName(this.tileType.get(tileIndex)).setDepth(50);
+                let sprite = staticGroup.create((pos.x + tileX)*16, (pos.y + tileY)*16, 'tiles', parseInt(tileIndex), true, name == 'station' ? false : true)
+                            .setOrigin(0, 0).setName(name).setDepth(50);
+                
+                if (name == 'station') {
+                    sprite.body = null;
+                }
+                            
             }
         });
 
