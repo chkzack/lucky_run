@@ -10,6 +10,7 @@ class Play extends Phaser.Scene {
       this.debugGraphics = this.add.graphics();
       this.data = this.scene.settings.data;
 
+      this.load.bitmapFont('flappy_font', 'assets/fonts/flappyfont/flappyfont.png', 'assets/fonts/flappyfont/flappyfont.xml');
       this.load.spritesheet("tiles", "assets/base.png", { frameWidth: 16, frameHeight: 16 });
 
       // 角色
@@ -38,7 +39,7 @@ class Play extends Phaser.Scene {
         fontSize: "18px",
         fill: "#ffaaaa",
       }).setScrollFactor(0).setDepth(100).setOrigin(0.5, 0.5);
-      this.buffText.setText('3% UP!');
+      this.buffText.setText('0% UP!');
 
       this.tweens.add({
         targets: this.buffText,
@@ -95,17 +96,7 @@ class Play extends Phaser.Scene {
 
       this.initLevel();
       
-
-      // 10ms 定时任务
-      // 40*16 场景的过场时间为
-      // pace, time
-      // 1.6, 4000ms
-      // 1.8, 3500ms
-      // 2.1, 3000ms
-      // 2.56, 2500ms
-      // 3.2, 2000ms
-      // 4.27, 1500ms
-      // 6.4, 1000ms
+      // 定时任务
       this.timedEvent = this.time.addEvent({ delay: 10, callback: this.updateBlock, callbackScope: this, loop: true });
 
       // 
@@ -203,16 +194,7 @@ class Play extends Phaser.Scene {
 
     }
     /**
-     *10ms 定时任务
-      40*16 场景的过场时间为
-      pace, time
-      1.6, 4000ms
-      1.8, 3500ms
-      2.1, 3000ms
-      2.56, 2500ms
-      3.2, 2000ms
-      4.27, 1500ms
-      6.4, 1000ms
+     * 选择下一关
      */
     pickNextLevel() {
       // 抽取下一个地图进行渲染
@@ -343,7 +325,7 @@ class Play extends Phaser.Scene {
       // this.scoreText.destroy();
       // this.enemyScoreText.destroy(); 
       
-      this.role.anims.stop("jump", 0);
+      this.role.anims.stop("jump", 3000);
       this.input.off('pointerdown', this.jump, this);
       this.time.shutdown();
     }  
@@ -415,20 +397,19 @@ class Play extends Phaser.Scene {
       let limit = (this.data.endTime - this.data.startTime) / 1000 + 5;
       console.debug(limit);
   
-      if (this.data.count > limit || this.data.count > this.data.pipeGens) {
-        alert("检测到数据异常，本局游戏将不会记录");
-        this.data.checkPlayPoints(this.showGameOverText.bind(this));
-      } else {
-        this.data.saveScore(this.data.checkPlayPoints.bind(this.data), this.showGameOverText.bind(this));
-      }
+      this.showGameOverText();
+      // if (this.data.count > limit || this.data.count > this.data.pipeGens) {
+      //   alert("检测到数据异常，本局游戏将不会记录");
+      //   this.data.checkPlayPoints(this.showGameOverText.bind(this));
+      // } else {
+      //   this.data.saveScore(this.data.checkPlayPoints.bind(this.data), this.showGameOverText.bind(this));
+      // }
     }
   
     showGameOverText() {
   
-      this.scoreText.destroy();
-      if (this.resultText) {
-        this.resultText.destroy();
-      }
+      this.scoreText && this.scoreText.destroy();
+      this.resultText && this.resultText.destroy();
   
       this.data.bestScore = this.data.bestScore || 0;
       this.data.historyScore = this.data.historyScore || 0;
@@ -440,10 +421,7 @@ class Play extends Phaser.Scene {
   
       this.gameOverGroup = this.add.group(); //添加一个组
   
-      //game over 文字图片
-      //let gameOverText = this.gameOverGroup.create(game.config.width/2, 60, "game_over").setDepth(150); 
-  
-      // 0分重试
+      // game over 文字图片
       let font = this.data.count == 0 ? "RETRY" : this.data.hasPlayPoints ? "VICTORY" : "DEFEAT";
       let resultText = this.add.bitmapText(game.config.width/2, 50, "flappy_font", font, 50, this.gameOverGroup)
                               .setOrigin(0.5, 0)
@@ -454,29 +432,12 @@ class Play extends Phaser.Scene {
       this.data.count == 0 ? resultText.setTint(0xffffff, 0xffffff, 0xF99057, 0xF99057) : 
       this.data.hasPlayPoints ? resultText.setTint(0xffffff, 0xffffff, 0xfce95f, 0xfce95f) : resultText.setTint(0xffffff, 0xffffff, 0xadada8, 0xadada8);                     
        
-  
-      // 分数板
-      let scoreboard = this.gameOverGroup.create(game.config.width/2, 185, "score_board").setDepth(150); 
-  
-      // 当前连胜次数
-      let currentScoreText = this.add.bitmapText(game.config.width/2 + 60, 165, "flappy_font", this.data.score, 20, this.gameOverGroup)
-                                  .setDepth(150)
-                                  .setOrigin(0.5, 0); 
-      // 最佳连胜次数
-      let bestScoreText = this.add.bitmapText(game.config.width/2 + 60, 210, "flappy_font", this.data.bestScore, 20, this.gameOverGroup)
-                                  .setDepth(150)
-                                  .setOrigin(0.5, 0);
-      // 累计获胜次数
-      let HistoryScoreText = this.add.bitmapText(game.config.width/2 - 55, 165, "flappy_font", this.data.historyScore, 20, this.gameOverGroup)
-                                  .setDepth(150)
-                                  .setOrigin(0.5, 0);
-      
       let shareBtnPosX = game.config.width / 2;
   
       if (this.data.hasPlayPoints) {
         shareBtnPosX += 60;
   
-        let replayBtn = this.gameOverGroup.create(game.config.width / 2 - 60, 300, "btn").setDepth(200).setInteractive();
+        let replayBtn = this.add.bitmapText(game.config.width / 2 - 60, 200, "flappy_font", "CONTINUE", 30, this.gameOverGroup).setDepth(200).setInteractive();
         replayBtn.once('pointerup', function () {
           this.scene.stop('play');
           this.data.reset();
@@ -484,12 +445,12 @@ class Play extends Phaser.Scene {
         }, this);
       }
   
-      let shareBtn = this.gameOverGroup.create(shareBtnPosX, 300, "share").setDepth(200).setInteractive();
-      shareBtn.once('pointerup', function () {
-        this.scene.stop('play');
-        // 分享按钮
-        window.location.href = this.data.shareLink();
-      }, this);
+      // let shareBtn = this.add.bitmapText(shareBtnPosX, 300, "flappy_font", "SHARE", 50, this.gameOverGroup).setDepth(200).setInteractive();
+      // shareBtn.once('pointerup', function () {
+      //   this.scene.stop('play');
+      //   // 分享按钮
+      //   window.location.href = this.data.shareLink();
+      // }, this);
   
     }
   

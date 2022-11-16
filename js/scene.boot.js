@@ -15,18 +15,18 @@ class Boot extends Phaser.Scene {
       this.debugGraphics = this.add.graphics();
       this.data = this.scene.settings.data;
       this.load.spritesheet("tiles", "assets/base.png", { frameWidth: 16, frameHeight: 16 });
-
       // 角色
       this.load.spritesheet("role", "assets/animations/role.png", { frameWidth: 32, frameHeight: 32 , startFrame: 0, endFrame: 3});
 
       // 根据时间切换场景
-      this.hour = new Date().getHours;
-      if (this.hour >= 6 &&  this.hour <= 18) {
-        this.load.image("background", "assets/background.png");
-      } else {
-        this.load.image("background", "assets/background2.png");
-      }
+      // this.hour = new Date().getHours;
+      // if (this.hour >= 6 &&  this.hour <= 18) {
+      //   this.load.image("background", "assets/background.png");
+      // } else {
+      //   this.load.image("background", "assets/background2.png");
+      // }
       
+      this.load.image("background", "assets/background" + (Math.random() > 0.5 ? "" : "2") + ".png");
     }
   
     create() {
@@ -135,14 +135,14 @@ class Boot extends Phaser.Scene {
        */
       this.data.checkPlayPoints(() => {
   
-        this.message = this.add.text(16*20, 128, (this.data.hasPlayPoints ? "点击开始" : "分享"), { 
+        this.message = this.add.text(16*20, 128, (this.data.hasPlayPoints ? "START" : "SHARE"), { 
           font: "24px Arial Black", 
           fill: "#fff",
         }).setScrollFactor(0)
         .setDepth(100)
         .setOrigin(0, 0);
 
-        this.message.setStroke('#f77234', 16);
+        this.message.setStroke('#f77234', 4);
         this.message.setShadow(2, 2, "#333333", 2, true, true);
 
         this.tweens.add({
