@@ -115,18 +115,16 @@ class Play extends Phaser.Scene {
       this.start();
     }
   
-    update() {
+    update(delta) {
       // 游戏未开始
       if (!this.data.isGameStart()) return;
       
       // 背景
-      this.background.tilePositionX += (this.data.pace / 4);
+      this.background.tilePositionX += this.data.pace * (1000 / delta);
   
       if (this.role.angle < 0) this.role.angle += 4.5; //下降时头朝下
       this.role.setGravityY(this.data.gravity);
-
       this.text.setText("Distance: " + (this.distance || 0) + "px, level:" + (this.level || 0) + ", cost: " + (this.interval || 0) + "ms");
-
       this.timeCountdownText.setText(''+ parseInt(this.timeCountdown/60000) + ':' + parseInt(this.timeCountdown/1000%60) +':' + parseInt(this.timeCountdown%1000));
     }
   

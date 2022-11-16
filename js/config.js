@@ -209,6 +209,9 @@ const params = {
     },
   
     initWebsocket() {
+      if (this.debug) {
+        return;
+      }
       let options = {
         target: this,
         url: 'wss://' + this.host + '/wss', 
@@ -237,6 +240,9 @@ const params = {
   
     // 发送数据
     sendWebSocket() {
+      if (this.debug) {
+        return;
+      }
       let data = {
         uid: this.uid,
         score: this.count,
@@ -245,6 +251,9 @@ const params = {
     },
   
     closeWebsocket() {
+      if (this.debug) {
+        return;
+      }
       this.webSocket.close();
     }
   }

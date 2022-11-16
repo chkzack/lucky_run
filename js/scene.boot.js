@@ -186,9 +186,9 @@ class Boot extends Phaser.Scene {
       });
     }
   
-    update() {
+    update(delta) {
       // 背景
-      this.background.tilePositionX += (this.data.pace / 4);
+      this.background.tilePositionX += this.data.pace * (1000 / delta);
     }
   
     updateBlock() {
